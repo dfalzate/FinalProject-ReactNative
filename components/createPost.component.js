@@ -6,19 +6,22 @@ import {
   TouchableOpacity,
   Text,
   Dimensions,
+  Alert,
 } from 'react-native';
-import MapView, { Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import {
   getInitialLocation,
-  getUserId,
   getInitialTime,
   getFinalTime,
   getRoute,
   getLevel,
   getSpeed,
 } from '../reducers/createPost.reducer';
+import { addPost } from '../reducers/common.reducer';
+import axios from 'axios';
+import { SERVER_PATH } from 'react-native-dotenv';
+import { MapComponent } from './map.component';
 
 const GETPOSITION = 'GETPOSITION';
 
@@ -39,7 +42,6 @@ TaskManager.defineTask(GETPOSITION, ({ data, error }) => {
 
 function CreatePostForm(props) {
   React.useEffect(() => {
-    props.getUserId(props.userId);
     async function getInitialLocation() {
       if (props.locationPermission) {
         let location = await Location.getCurrentPositionAsync({
@@ -52,6 +54,32 @@ function CreatePostForm(props) {
     }
     getInitialLocation();
   }, []);
+
+  async function save() {
+    const newPost = {
+      title: props.title,
+      startTime: props.startTime,
+      endTime: props.endTime,
+      level: props.level,
+      route: props.route,
+      speed: props.speed,
+    };
+    console.log('New post', newPost);
+    const response = await axios({
+      method: 'post',
+      url: `${SERVER_PATH}/posts/user/${props.user}`,
+      data: newPost,
+    });
+    if (response.status === 200) {
+      props.addPost(newPost);
+      Alert.alert(
+        'Post created',
+        'El post fué creado correctamente',
+        [{ text: 'OK', onPress: () => props.navigation.navigate('Home') }],
+        { cancelable: false }
+      );
+    }
+  }
 
   async function startWatch() {
     console.log('Start');
@@ -74,21 +102,14 @@ function CreatePostForm(props) {
 
   return (
     <View style={style.container}>
-      <MapView
+      <MapComponent
         style={style.mapStyle}
-        region={props.initialLocation}
+        initialRegion={props.initialLocation}
+        route={props.route}
         showsUserLocation={true}
-        showsMyLocationButton={true}
         zoomEnabled={true}
-      >
-        {props.route && props.route.length > 0 ? (
-          <Polyline
-            coordinates={props.route}
-            strokeColor='#000'
-            strokeWidth={4}
-          />
-        ) : null}
-      </MapView>
+        liteMode={false}
+      />
 
       <View style={style.buttons}>
         <TouchableOpacity
@@ -107,10 +128,7 @@ function CreatePostForm(props) {
         >
           <Text style={style.textButton}>Stop</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={style.button}
-          onPress={() => console.log('Save')}
-        >
+        <TouchableOpacity style={style.button} onPress={() => save()}>
           <Text style={style.textButton}>Save</Text>
         </TouchableOpacity>
       </View>
@@ -154,21 +172,26 @@ const style = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    userId: state.commonReducer.userId,
     locationPermission: state.commonReducer.locationPermission,
-    route: state.createPostReducer.route,
     initialLocation: state.createPostReducer.initialLocation,
+    user: state.commonReducer.userId,
+    title: state.createPostReducer.title,
+    startTime: state.createPostReducer.startTime,
+    endTime: state.createPostReducer.endTime,
+    level: state.createPostReducer.level,
+    route: state.createPostReducer.route,
+    speed: state.createPostReducer.speed,
   };
 };
 
 const mapDispatchToProps = {
   getInitialLocation,
-  getUserId,
   getInitialTime,
   getFinalTime,
   getRoute,
   getLevel,
   getSpeed,
+  addPost,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreatePostForm);

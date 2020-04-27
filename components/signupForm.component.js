@@ -6,6 +6,7 @@ import {
   TextInput,
   View,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import {
   onNameChange,
@@ -14,6 +15,7 @@ import {
   onPasswordChangeSignup,
 } from '../reducers/signup.reducer';
 import axios from 'axios';
+import { SERVER_PATH } from 'react-native-dotenv';
 
 function SignForm(props) {
   function handlePress() {
@@ -28,7 +30,7 @@ function SignForm(props) {
       headers: {
         'Content-Type': 'application/json',
       },
-      url: 'https://sheltered-peak-26319.herokuapp.com/users/signup',
+      url: `${SERVER_PATH}/users/signup`,
       data: newUser,
     }).then((data) => {
       Alert.alert(
@@ -37,8 +39,7 @@ function SignForm(props) {
         [
           {
             text: 'OK',
-            onPress: () => {
-              console.log(data);
+            onPress: () => {              
               props.navigation.navigate('Login');
             },
           },

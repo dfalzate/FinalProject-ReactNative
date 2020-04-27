@@ -12,6 +12,7 @@ import axios from 'axios';
 import { onEmailChange, onPasswordChange } from '../reducers/login.reducer';
 import { isLogged, locationPermission } from '../reducers/common.reducer';
 import * as Permissions from 'expo-permissions';
+import { SERVER_PATH } from 'react-native-dotenv';
 
 function LoginForm(props) {
   React.useEffect(() => {
@@ -29,12 +30,12 @@ function LoginForm(props) {
         headers: {
           'Content-Type': 'application/json',
         },
-        url: 'https://sheltered-peak-26319.herokuapp.com/users/signin',
+        url: `${SERVER_PATH}/users/signin`,
         data: user,
       });
       if (data.status === 200) {
         props.isLogged(data.data);
-        props.navigation.navigate('CreatePost');
+        props.navigation.navigate('Home');
       } else {
         Alert.alert(
           'Error',

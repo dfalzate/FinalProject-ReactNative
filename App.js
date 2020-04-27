@@ -8,6 +8,7 @@ import { LoginScreen } from './pages/Login';
 import { SignupScreen } from './pages/Signup';
 import HomeScreen from './pages/Home';
 import { CreatePostScreen } from './pages/CreatePost';
+import { PostScreen } from './pages/Post.js';
 
 const Stack = createStackNavigator();
 
@@ -20,6 +21,7 @@ function App() {
           <Stack.Screen name='Signup' component={SignupScreen} />
           <Stack.Screen name='Home' component={HomeScreen} />
           <Stack.Screen name='CreatePost' component={CreatePostScreen} />
+          <Stack.Screen name='Post' component={PostScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

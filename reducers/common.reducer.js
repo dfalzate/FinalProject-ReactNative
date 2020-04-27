@@ -1,7 +1,7 @@
 const ISLOGGED = 'ISLOGGED';
 const LOCATIONPERMISSION = 'LOCATIONPERMISSION';
-
 const GETPOSTS = 'GETPOSTS';
+const ADDPOST = 'ADDPOST';
 
 export function isLogged(data) {
   return function (dispatch) {
@@ -34,6 +34,15 @@ export function getPosts(data) {
   };
 }
 
+export function addPost(data) {
+  return function (dispatch) {
+    dispatch({
+      type: ADDPOST,
+      payload: data,
+    });
+  };
+}
+
 let initialState = {
   userId: '',
   isLogged: false,
@@ -60,6 +69,11 @@ export function commonReducer(state = initialState, action) {
       return {
         ...state,
         posts: action.payload,
+      };
+    case ADDPOST:
+      return {
+        ...state,
+        posts: state.posts.concat([action.payload]),
       };
     default:
       return state;

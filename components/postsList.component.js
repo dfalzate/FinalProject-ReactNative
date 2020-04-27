@@ -6,23 +6,25 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
+  Dimensions,
 } from 'react-native';
 import { getPosts } from '../reducers/common.reducer';
 import axios from 'axios';
 import Post from '../components/post.component';
+import { SERVER_PATH } from 'react-native-dotenv';
 
 function PostList(props) {
   React.useEffect(() => {
     axios({
       method: 'get',
-      url: `https://sheltered-peak-26319.herokuapp.com/posts/user/${props.userId}`,
+      url: `${SERVER_PATH}/posts/user/${props.userId}`,
     }).then(({ data }) => {
       props.getPosts(data);
     });
   }, []);
 
   return (
-    <View>
+    <View style={style.container}>
       <TouchableOpacity
         style={style.button}
         onPress={() => props.navigation.navigate('CreatePost')}
@@ -30,11 +32,12 @@ function PostList(props) {
         <Text style={style.textButton}>Create post</Text>
       </TouchableOpacity>
       <FlatList
+        style={style.flatList}
         data={props.posts}
         renderItem={(data) => {
           return (
             <View>
-              <Post post={data.item} />
+              <Post post={data.item} navigation={props.navigation} />
             </View>
           );
         }}
@@ -45,8 +48,17 @@ function PostList(props) {
 }
 
 const style = StyleSheet.create({
+  container: {
+    display: 'flex',
+    width: Dimensions.get('window').width,
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ecf0f1',
+  },
   button: {
     marginTop: 10,
+    marginBottom: 10,
     width: 180,
     display: 'flex',
     flexDirection: 'row',
@@ -62,6 +74,9 @@ const style = StyleSheet.create({
   mapStyle: {
     width: 300,
     height: 300,
+  },
+  flatList: {
+    width: Dimensions.get('window').width,
   },
 });
 

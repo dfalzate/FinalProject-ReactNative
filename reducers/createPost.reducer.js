@@ -82,7 +82,6 @@ let initialState = {
   },
   user: '',
   title: 'Post title',
-  comments: 'Comments',
   startTime: '',
   endTime: '',
   level: [],

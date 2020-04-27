@@ -5,7 +5,6 @@ import CreatePostFrom from '../components/createPost.component';
 export function CreatePostScreen(props) {
   return (
     <View style={style.view}>
-      <Text>Crear nuevo post</Text>
       <CreatePostFrom navigation={props.navigation} />
     </View>
   );

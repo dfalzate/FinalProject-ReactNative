@@ -2,7 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import LoginForm from '../components/loginForm.component';
 
-export function LoginScreen(props) {
+export function LoginScreen(props) {  
+
   return (
     <View style={style.view}>
       <Text>Login</Text>
