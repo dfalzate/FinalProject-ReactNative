@@ -1,3 +1,4 @@
+import { SERVER_PATH } from 'react-native-dotenv';
 import React from 'react';
 import { connect } from 'react-redux';
 import {
@@ -8,20 +9,27 @@ import {
    Text,
    Dimensions,
 } from 'react-native';
-import { getPosts } from '../reducers/common.reducer';
+import { onPostsReceived } from '../reducers/user.reducer';
 import axios from 'axios';
 import Post from '../components/post.component';
-import { SERVER_PATH } from 'react-native-dotenv';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { ProgressDialog } from 'react-native-simple-dialogs';
 
 function PostList(props) {
+   const [progressVisible, setProgressVisible] = React.useState(false);
+
    React.useEffect(() => {
-      axios({
+      getPosts();
+   }, []);
+
+   async function getPosts() {
+      const result = await axios({
          method: 'get',
          url: `${SERVER_PATH}/posts/user/${props.userId}`,
-      }).then(({ data }) => {
-         props.getPosts(data);
       });
-   }, []);
+      if (result.status === 200) props.onPostsReceived(result.data);
+   }
 
    return (
       <View style={style.container}>
@@ -29,19 +37,29 @@ function PostList(props) {
             style={style.button}
             onPress={() => props.navigation.navigate('CreatePost')}
          >
-            <Text style={style.textButton}>Create post</Text>
+            <FontAwesomeIcon style={style.add} icon={faPlus} size={28} />
          </TouchableOpacity>
          <FlatList
             style={style.flatList}
             data={props.posts}
             renderItem={(data) => {
+               const postId = data.item._id;
                return (
-                  <View>
-                     <Post post={data.item} navigation={props.navigation} />
+                  <View key={postId}>
+                     <Post
+                        user={props.userId}
+                        postId={postId}
+                        navigation={props.navigation}
+                     />
                   </View>
                );
             }}
             keyExtractor={(post) => `${post._id}`}
+         />
+         <ProgressDialog
+            visible={progressVisible}
+            title='Progreso'
+            message='Por favor espere.'
          />
       </View>
    );
@@ -50,26 +68,26 @@ function PostList(props) {
 const style = StyleSheet.create({
    container: {
       display: 'flex',
-      width: Dimensions.get('screen').width - 20,
+      width: Dimensions.get('screen').width - 30,
       height: '95%',
       alignItems: 'center',
       justifyContent: 'center',
+      backgroundColor: '#282C34',
    },
    button: {
       position: 'absolute',
-      bottom: 20,
-      right: 20,
-      width: 90,
-      height: 90,
-      borderRadius: 45,
+      bottom: 10,
+      right: 10,
+      width: 70,
+      height: 70,
+      borderRadius: 35,
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: 'red',
       zIndex: 1000,
    },
-   textButton: {
+   add: {
       color: 'white',
-      fontWeight: '200',
    },
    flatList: {
       width: '100%',
@@ -79,13 +97,13 @@ const style = StyleSheet.create({
 
 let mapStateToProps = (state) => {
    return {
-      userId: state.commonReducer.userId,
-      posts: state.commonReducer.posts,
+      userId: state.userReducer.id,
+      posts: state.userReducer.posts,
    };
 };
 
 let mapDispatchToProps = {
-   getPosts,
+   onPostsReceived,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(PostList);

@@ -24,8 +24,8 @@ function getRegionForCoordinates(points) {
 
    const midX = (minX + maxX) / 2;
    const midY = (minY + maxY) / 2;
-   const deltaX = maxX - minX;
-   const deltaY = maxY - minY;
+   const deltaX = maxX - minX + 0.0001;
+   const deltaY = maxY - minY + 0.0001;
 
    return {
       latitude: midX,

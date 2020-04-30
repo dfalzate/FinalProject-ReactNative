@@ -1,12 +1,16 @@
 import { combineReducers } from 'redux';
-import { commonReducer } from './common.reducer.js';
 import { loginReducer } from './login.reducer';
 import { signupReducer } from './signup.reducer';
 import { createPostReducer } from './createPost.reducer';
+import { commentReducer } from './comment.reducer';
+import { userReducer } from './user.reducer';
+import { postReducer } from './post.reducer';
 
 export const allReducers = combineReducers({
-  commonReducer,
-  loginReducer,
-  signupReducer,
-  createPostReducer,
+   loginReducer,
+   signupReducer,
+   createPostReducer,
+   commentReducer,
+   userReducer,
+   postReducer,
 });

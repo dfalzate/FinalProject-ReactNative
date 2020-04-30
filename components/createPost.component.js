@@ -19,7 +19,7 @@ import {
    getSpeed,
    onTitleChange,
 } from '../reducers/createPost.reducer';
-import { addPost } from '../reducers/common.reducer';
+import { addPost } from '../reducers/user.reducer';
 import axios from 'axios';
 import { SERVER_PATH } from 'react-native-dotenv';
 import { MapComponent } from './map.component';
@@ -75,6 +75,7 @@ function CreatePostForm(props) {
          level: props.level,
          route: props.route,
          speed: props.speed,
+         comments: [],
       };
       const response = await axios({
          method: 'post',
@@ -151,13 +152,7 @@ function CreatePostForm(props) {
             >
                <Text style={style.textButton}>Save</Text>
             </TouchableOpacity>
-            <Dialog
-               visible={saveMenuVisible}
-               title='Grabar'
-               // onTouchOutside={() => {
-               //    setSaveMenuVisible(false);
-               // }}
-            >
+            <Dialog visible={saveMenuVisible} title='Grabar'>
                <View>
                   <Text style={style.title__text}>Titulo</Text>
                   <TextInput
@@ -294,7 +289,7 @@ const style = StyleSheet.create({
 const mapStateToProps = (state) => {
    return {
       initialLocation: state.createPostReducer.initialLocation,
-      userId: state.commonReducer.userId,
+      userId: state.userReducer.id,
       title: state.createPostReducer.title,
       startTime: state.createPostReducer.startTime,
       endTime: state.createPostReducer.endTime,
@@ -311,8 +306,8 @@ const mapDispatchToProps = {
    getRoute,
    getLevel,
    getSpeed,
-   addPost,
    onTitleChange,
+   addPost,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreatePostForm);

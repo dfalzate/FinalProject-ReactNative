@@ -1,3 +1,4 @@
+import { SERVER_PATH } from 'react-native-dotenv';
 import React from 'react';
 import { connect } from 'react-redux';
 import {
@@ -7,14 +8,16 @@ import {
    View,
    StyleSheet,
    Alert,
+   Dimensions,
 } from 'react-native';
 import axios from 'axios';
 import { onEmailChange, onPasswordChange } from '../reducers/login.reducer';
-import { isLogged, locationPermission } from '../reducers/common.reducer';
+import { onUserReceived } from '../reducers/user.reducer';
 import * as Permissions from 'expo-permissions';
-import { SERVER_PATH } from 'react-native-dotenv';
 import * as Location from 'expo-location';
 import { getInitialLocation } from '../reducers/createPost.reducer';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 
 function LoginForm(props) {
    React.useEffect(() => {
@@ -48,7 +51,7 @@ function LoginForm(props) {
             data: user,
          });
          if (data.status === 200) {
-            props.isLogged(data.data);
+            props.onUserReceived(data.data);
             props.navigation.navigate('Home');
          } else {
             Alert.alert(
@@ -70,27 +73,57 @@ function LoginForm(props) {
 
    return (
       <View>
-         <Text>Email</Text>
+         <View
+            style={{
+               display: 'flex',
+               flexDirection: 'row',
+               alignItems: 'center',
+            }}
+         >
+            <FontAwesomeIcon icon={faEnvelope} size={15} />
+            <Text> Email</Text>
+         </View>
          <TextInput
             style={style.input}
             keyboardType='email-address'
             onChangeText={(text) => props.onEmailChange(text)}
+            placeholder='Email'
+            underlineColorAndroid='blue'
          />
-         <Text>Password</Text>
+         <View
+            style={{
+               display: 'flex',
+               flexDirection: 'row',
+               alignItems: 'center',
+            }}
+         >
+            <FontAwesomeIcon icon={faLock} size={15} />
+            <Text> Password</Text>
+         </View>
          <TextInput
             style={style.input}
             secureTextEntry={true}
             onChangeText={(text) => props.onPasswordChange(text)}
-         />
-         <TouchableOpacity style={style.button} onPress={handlePress}>
-            <Text style={style.textButton}>Sign in</Text>
-         </TouchableOpacity>
-         <TouchableOpacity
-            style={style.button}
-            onPress={() => props.navigation.navigate('Signup')}
+            placeholder='Password'
+            underlineColorAndroid='blue'
+         ></TextInput>
+         <View
+            style={{
+               display: 'flex',
+               alignContent: 'center',
+               alignItems: 'center',
+            }}
          >
-            <Text style={style.textButton}>Sign up</Text>
-         </TouchableOpacity>
+            <TouchableOpacity style={style.button} onPress={handlePress}>
+               <Text style={style.textButton}>Sign in</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+               style={style.button}
+               onPress={() => props.navigation.navigate('Signup')}
+            >
+               <Text style={style.textButton}>Sign up</Text>
+            </TouchableOpacity>
+         </View>
       </View>
    );
 }
@@ -98,24 +131,27 @@ function LoginForm(props) {
 const style = StyleSheet.create({
    button: {
       marginTop: 10,
-      width: 180,
+      width: 150,
       display: 'flex',
       flexDirection: 'row',
-      height: 40,
+      height: 45,
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: 'blue',
+      borderRadius: 10,
    },
    textButton: {
+      display: 'flex',
       color: 'white',
       fontWeight: '200',
+      fontSize: 17,
    },
    input: {
-      height: 30,
-      width: 180,
+      height: 50,
+      width: Dimensions.get('screen').width - 100,
       borderColor: 'gray',
-      borderWidth: 1,
       marginBottom: 10,
+      padding: 10,
    },
 });
 
@@ -123,16 +159,14 @@ const mapStateToProps = (state) => {
    return {
       email: state.loginReducer.loginEmail,
       password: state.loginReducer.loginPassword,
-      locationPermissionState: state.commonReducer.locationPermission,
    };
 };
 
 const mapDispatchToProps = {
    onEmailChange,
    onPasswordChange,
-   isLogged,
-   locationPermission,
    getInitialLocation,
+   onUserReceived,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);

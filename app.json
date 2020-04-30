@@ -1,28 +1,31 @@
 {
-  "expo": {
-    "name": "temp1",
-    "slug": "temp1",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    }
-  }
+   "expo": {
+      "name": "Tracker",
+      "slug": "Tracker",
+      "platforms": ["ios", "android", "web"],
+      "version": "1.0.0",
+      "orientation": "portrait",
+      "icon": "./assets/tracker.png",
+      "splash": {
+         "image": "./assets/tracker.png",
+         "resizeMode": "contain",
+         "backgroundColor": "#ffffff"
+      },
+      "updates": {
+         "fallbackToCacheTimeout": 0
+      },
+      "assetBundlePatterns": ["**/*"],
+      "ios": {
+         "supportsTablet": true
+      },
+      "android": {
+         "package": "com.diegoff.tracker",
+         "versionCode": 1,
+         "config": {
+            "googleMaps": {
+               "apiKey": "AIzaSyByGhoXYnq7FKqU9yBAL7F7iaE4Ucf_IUk"
+            }
+         }
+      }
+   }
 }
